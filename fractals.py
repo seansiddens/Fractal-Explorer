@@ -21,7 +21,7 @@ class Buddhabrot:
         self.data = np.zeros((self.height, self.width, 3), dtype=np.uint8)
         self.exposures = np.zeros((3, self.height, self.width))
 
-        self.batches = 5
+        self.batches = 10
         self.batch_size = sample_size // self.batches
         self.sample_size = self.batch_size * self.batches
 
@@ -31,7 +31,7 @@ class Buddhabrot:
 
     def render(self):
         current_batch = 1
-        while current_batch <= 5:
+        while current_batch <= self.batches:
             print("Starting batch:", current_batch)
             points = self.gen_points(self.threshold)
             self.expose(points)
@@ -42,7 +42,7 @@ class Buddhabrot:
 
     def render_color(self):
         current_batch = 1
-        while current_batch <= 5:
+        while current_batch <= self.batches:
             print("Starting batch:", current_batch)
             points = self.gen_points(self.threshold)
             self.expose(points)

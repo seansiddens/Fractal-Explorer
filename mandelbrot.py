@@ -183,10 +183,10 @@ if __name__ == "__main__":
     THRESHOLD = 500
     NUM_POINTS = 1000
 
-    b = fractals.Buddhabrot(3500, 2000, 10000000)
+    b = fractals.Buddhabrot(3500, 2000, 100000)
     b.render()
     b.display()
-    b.save('test-10000000n.png')
+    b.save('test.png')
 
     #
     # SCALE = 150
