@@ -1,3 +1,4 @@
+import fractals
 import scipy.misc as smp
 import math
 import random
@@ -80,21 +81,46 @@ def mandelbrot(width, height, real_range, imag_range, depth):
 
 def buddhabrot(width, height, num_points, threshold):
     data = np.zeros((height, width, 3), dtype=np.uint8)  # pixel color data for image
+
     initial_points = gen_points(num_points, threshold)  # random points are not part of the set - used in final iteration
-
     exposures = expose(initial_points, threshold, width, height)
-    max_exposure = exposures.max()
-    print(max_exposure)
+    data = image_write(data, exposures, 'R')
 
-    for y in range(height):
-        for x in range(width):
-            data[y, x] = [int(translate(exposures[y, x], 0, max_exposure, 0, 255)),
-                          int(translate(exposures[y, x], 0, max_exposure, 0, 255)),
-                          int(translate(exposures[y, x], 0, max_exposure, 0, 255))]
+    initial_points = gen_points(num_points, 500)
+    exposures = expose(initial_points, 500, width, height)
+    data = image_write(data, exposures, 'G')
+
+    initial_points = gen_points(num_points, 50)
+    exposures = expose(initial_points, 50, width, height)
+    data = image_write(data, exposures, 'B')
 
     img = Image.fromarray(data)
     img.show()
     img.save("out.png")
+
+
+def image_write(buffer, exposures, channel=None):
+    max_exposure = exposures.max()
+    for y in range(len(buffer)):
+        for x in range(len(buffer[y])):
+            if channel == 'R':
+                buffer[y, x] = [int(translate(exposures[y, x], 0, max_exposure, 0, 255)),
+                                0,
+                                0]
+            elif channel == 'G':
+                buffer[y, x] = [0,
+                                int(translate(exposures[y, x], 0, max_exposure, 0, 255)),
+                                0]
+            elif channel == 'B':
+                buffer[y, x] = [0,
+                                0,
+                                int(translate(exposures[y, x], 0, max_exposure, 0, 255))]
+            else:
+                buffer[y, x] = [int(translate(exposures[y, x], 0, max_exposure, 0, 255)),
+                                int(translate(exposures[y, x], 0, max_exposure, 0, 255)),
+                                int(translate(exposures[y, x], 0, max_exposure, 0, 255))]
+
+    return buffer
 
 
 def gen_points(num, threshold):
@@ -155,9 +181,11 @@ if __name__ == "__main__":
     WIDTH = 1750
     HEIGHT = 1000
     THRESHOLD = 500
-    NUM_POINTS = 1000000
+    NUM_POINTS = 1000
 
-    im = buddhabrot(WIDTH, HEIGHT, NUM_POINTS, THRESHOLD)
+    b = fractals.Buddhabrot()
+    b.display()
+    b.save('color.png')
 
     #
     # SCALE = 150
