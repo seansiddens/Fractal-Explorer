@@ -20,18 +20,27 @@ class Buddhabrot:
         self.num_sample_points = 10000
 
         self.red_threshold = 5000
+        print("Generating red points....")
         self.red_points = self.gen_points(self.red_threshold)
+        print("Exposing red channel....")
         self.red_exposures = self.expose(self.red_points, self.red_threshold)
+        print("Writing to red channel....")
         self.image_write(self.red_exposures, 'R')
 
         self.green_threshold = 500
+        print("Generating green points....")
         self.green_points = self.gen_points(self.green_threshold)
+        print("Exposing green channel....")
         self.green_exposures = self.expose(self.green_points, self.green_threshold)
+        print("Writing to green channel....")
         self.image_write(self.green_exposures, 'G')
 
         self.blue_threshold = 50
+        print("Generating blue points....")
         self.blue_points = self.gen_points(self.blue_threshold)
+        print("Exposing blue channel....")
         self.blue_exposures = self.expose(self.blue_points, self.blue_threshold)
+        print("Writing to blue channel....")
         self.image_write(self.blue_exposures, 'B')
 
         self.image = Image.fromarray(self.data)
@@ -44,14 +53,14 @@ class Buddhabrot:
 
     def gen_points(self, threshold):
         """ Returns a list of random points in complex plane outside of the Mandelbrot set"""
-        print("Generating points....")
         # Generate an initial list of random points on the image
         points = []
         while len(points) < self.num_sample_points:
             random_val = complex(random.uniform(-2.5, 1), random.uniform(-1, 1))
             if not self.iterate(random_val, threshold):
                 points.append(random_val)
-                print("Progress:", round(len(points) / self.num_sample_points * 100, 2), "%")
+                if round(len(points) / self.num_sample_points * 100, 2) % 10 == 0:
+                    print("Progress:", round(len(points) / self.num_sample_points * 100, 2), "%")
 
         return points
 
@@ -69,12 +78,13 @@ class Buddhabrot:
 
     def expose(self, complex_nums, threshold):
         """ Iterates a list of complex nums and tracks where they land in 2D array representing image """
-        print("Beginning exposures")
 
         exposures = np.zeros((self.height, self.width))
         count = 1
         for num in complex_nums:
-            print("Progress:", round(count / len(complex_nums) * 100, 2), "%")
+            if round(count / len(complex_nums) * 100, 2) % 10 == 0:
+                print("Progress:", round(count / len(complex_nums) * 100, 2), "%")
+
             c = num
             z = complex(0, 0)   # Initial starting value of Z
             for i in range(threshold):
