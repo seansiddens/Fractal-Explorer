@@ -184,9 +184,9 @@ if __name__ == "__main__":
     NUM_POINTS = 1000
 
     b = fractals.Buddhabrot(1750, 1000, 1000000)
-    b.render(5000)
+    b.render_color()
     b.display()
-    b.save('test-brgt2-n1000000-t5000.png')
+    b.save('test-batches.png')
 
     #
     # SCALE = 150
