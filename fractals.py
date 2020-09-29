@@ -30,12 +30,14 @@ class Buddhabrot:
         self.threshold = 5000
 
     def render(self):
-        print("Generating points....")
-        points = self.gen_points(self.threshold)
-        print("Exposing....")
-        exposures = self.expose(points, self.threshold)
-        print("Writing to image...")
-        self.image_write(exposures)
+        current_batch = 1
+        while current_batch <= 5:
+            print("Starting batch:", current_batch)
+            points = self.gen_points(self.threshold)
+            self.expose(points)
+            current_batch += 1
+
+        self.image_write(color_mode=False)
         self.image = Image.fromarray(self.data)
 
     def render_color(self):
@@ -46,7 +48,7 @@ class Buddhabrot:
             self.expose(points)
             current_batch += 1
 
-        self.image_write()
+        self.image_write(color_mode=True)
         self.image = Image.fromarray(self.data)
 
     def display(self):
@@ -128,7 +130,7 @@ class Buddhabrot:
 
             count += 1
 
-    def image_write(self):
+    def image_write(self, color_mode=False):
         red_max = self.exposures[0].max()
         print(red_max)
         green_max = self.exposures[1].max()
@@ -136,8 +138,16 @@ class Buddhabrot:
         blue_max = self.exposures[2].max()
         print(blue_max)
 
-        for y in range(self.height):
-            for x in range(self.width):
-                self.data[y, x] = [int(translate(self.exposures[0, y, x], 0, red_max, 0, 255) * self.brightness_factor),
-                                   int(translate(self.exposures[1, y, x], 0, green_max, 0, 255) * self.brightness_factor),
-                                   int(translate(self.exposures[2, y, x], 0, blue_max, 0, 255) * self.brightness_factor)]
+        if color_mode is True:
+            for y in range(self.height):
+                for x in range(self.width):
+                    self.data[y, x] = [(255*math.sqrt(self.exposures[0, y, x]) / math.sqrt(red_max)),
+                                       (255*math.sqrt(self.exposures[1, y, x]) / math.sqrt(green_max)),
+                                       (255*math.sqrt(self.exposures[2, y, x]) / math.sqrt(blue_max))]
+
+        else:
+            for y in range(self.height):
+                for x in range(self.width):
+                    self.data[y, x] = [(255*math.sqrt(self.exposures[0, y, x]) / math.sqrt(red_max)),
+                                       (255*math.sqrt(self.exposures[0, y, x]) / math.sqrt(red_max)),
+                                       (255*math.sqrt(self.exposures[0, y, x]) / math.sqrt(red_max))]
